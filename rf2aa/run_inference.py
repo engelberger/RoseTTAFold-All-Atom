@@ -3,7 +3,15 @@ import hydra
 import torch
 import torch.nn as nn
 from dataclasses import asdict
+# Function to detect if running on Google Colab
+def is_colab():
+    return "COLAB_GPU" in os.environ
+if is_colab():
+  import sys
+  # Add the path to 
+  sys.path.insert(0, '/content/RoseTTAFold-All-Atom/')
 
+BASE_DIR = "/content" if is_colab() else os.path.expanduser("~")
 from rf2aa.data.merge_inputs import merge_all
 from rf2aa.data.covale import load_covalent_molecules
 from rf2aa.data.nucleic_acid import load_nucleic_acid
