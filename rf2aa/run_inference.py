@@ -7,7 +7,7 @@ from dataclasses import asdict
 from rf2aa.data.merge_inputs import merge_all
 from rf2aa.data.covale import load_covalent_molecules
 from rf2aa.data.nucleic_acid import load_nucleic_acid
-from rf2aa.data.protein import generate_msa_and_load_protein
+from rf2aa.data.protein import load_protein
 from rf2aa.data.small_molecule import load_small_molecule
 from rf2aa.ffindex import *
 from rf2aa.chemical import initialize_chemdata, load_pdb_ideal_sdf_strings
@@ -23,9 +23,9 @@ class ModelRunner:
     def __init__(self, config) -> None:
         self.config = config
         initialize_chemdata(self.config.chem_params)
-        FFindexDB = namedtuple("FFindexDB", "index, data")
-        self.ffdb = FFindexDB(read_index(config.database_params.hhdb+'_pdb.ffindex'),
-                              read_data(config.database_params.hhdb+'_pdb.ffdata'))
+        #FFindexDB = namedtuple("FFindexDB", "index, data")
+        #self.ffdb = FFindexDB(read_index(config.database_params.hhdb+'_pdb.ffindex'),
+        #                      read_data(config.database_params.hhdb+'_pdb.ffdata'))
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.xyz_converter = XYZConverter()
         self.deterministic = config.get("deterministic", False)
@@ -43,10 +43,9 @@ class ModelRunner:
                     raise ValueError(f"Chain name must be a single character, found chain with name: {chain}")
                 else:
                     chains.append(chain)
-                protein_input = generate_msa_and_load_protein(
-                    self.config.protein_inputs[chain]["fasta_file"],
-                    chain,
-                    self
+                protein_input = load_protein(
+                    msa_file = self.config.protein_inputs[chain]["msa_file"], # "/content/output/7u7w_204e8/in/msa.a3m", #
+                    hhr_fn=None, atab_fn=None, model_runner=self
                 ) 
                 protein_inputs[chain] = protein_input
         
