@@ -784,7 +784,7 @@ def parse_mol(filename, filetype="mol2", string=False, remove_H=True, find_autom
         ff = openbabel.OBForceField.FindForceField("mmff94")
         did_setup = ff.Setup(obmol)
         if did_setup:
-            ff.FastRotorSearch()
+            ff.RandomRotorSearch()
             ff.GetCoordinates(obmol)
         else:
             raise ValueError(f"Failed to generate 3D coordinates for molecule {filename}.")
